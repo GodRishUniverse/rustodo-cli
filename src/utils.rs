@@ -17,7 +17,13 @@ pub fn modify(id: u64) {
 
 pub fn add(items: &mut Vec<Item>, todo: String){
     // add
-    let id = items.len() as u64+1;
+    let mut id = 0;
+    if (items.len() as u64 == 0){
+        id =1;
+    } else{
+        id = items[items.len()-1].id+1;
+    }
+
 
     items.push(Item{id, todo, done: false});
 }
@@ -29,12 +35,20 @@ pub fn list(items: &Vec<Item>) {
     }
 }
 
-pub fn toggle_done(id : u64){
+pub fn toggle_done(items: &mut Vec<Item>, id : u64){
     // change the toggle -> need to specify id
+    match items.binary_search_by_key(&id, |item| item.id) {
+        Ok(index) => items[index].done = !items[index].done,
+        Err(_) => println!("Not found"),
+    }
 }
 
-pub fn remove(id: u64){
+pub fn remove(items: &mut Vec<Item>, id: u64){
     // remove from our list -> specify id
+    match items.binary_search_by_key(&id, |item| item.id) {
+        Ok(index) => items.remove(index),
+        Err(_) => println!("Not found"),
+    }
 }
 
 pub fn save(filename: String, filepath: String){
