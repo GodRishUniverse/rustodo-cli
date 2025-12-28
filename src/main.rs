@@ -11,6 +11,7 @@ fn main() {
     if args.len() < 2 {
         println!("Usage:");
         println!("  add <todo>");
+        println!("  mod <id> <todo>");
         println!("  list");
         println!("  done <id>");
         println!("  remove <id>");
@@ -21,9 +22,15 @@ fn main() {
            "add" => {
                let todo = args[2..].join(" ");
                add(&mut items, todo);
+               println!("ADDED!");
            }
            "list" => {
                list(&items);
+           }
+           "mod" => {
+                let id: u64 = args[2].parse().unwrap();
+                let todo = args[3..].join(" ");
+                modify(&mut items, id, todo);
            }
            "done" => {
                let id: u64 = args[2].parse().unwrap();

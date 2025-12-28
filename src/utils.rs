@@ -1,8 +1,8 @@
-// public struct for item in todo list
-
 /*
  * We need the #[derive(Debug)] to automatically implements the Debug trait - allows to format a value for debugging purposes using the {:?} or {:#?} format in println
  */
+
+ // public struct for item in todo list
 #[derive(Debug)]
 pub struct Item {
     pub id: u64,
