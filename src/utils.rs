@@ -1,3 +1,9 @@
+use std::fs::*;
+use std::fs;
+
+use std::io::{BufWriter, Write,BufReader, BufRead,Result};
+
+
 /*
  * We need the #[derive(Debug)] to automatically implements the Debug trait - allows to format a value for debugging purposes using the {:?} or {:#?} format in println
  */
@@ -59,10 +65,42 @@ pub fn remove(items: &mut Vec<Item>, id: u64){
     }
 }
 
-pub fn save(filename: String, filepath: String){
+pub fn save(items: Vec<Item>, filepath: String) -> std::io::Result<()>{
     // save the todo list that we have in Vector of Items
+
+    let file = File::create(&filepath)?;
+    let mut writer = BufWriter::new(file);
+
+    for item in items{
+        writeln!(writer, "{},{},{}", item.id, item.done, item.todo)?;
+    }
+
+    writer.flush()?;
+
+    Ok(())
 }
 
-pub fn load(filepath: String){
-    // load the file (.todo)
+pub fn load(filepath: String)-> std::io::Result<Vec<Item>> {
+    let file = File::open(filepath)?;
+    let reader = BufReader::new(file);
+    let mut items = Vec::new();
+
+
+    for line in reader.lines() {
+        let line = line?; // Handle potential I/O errors for each line
+        let values: Vec<&str> = line.split(',').collect(); // separate the line
+
+        if values.len() == 3 {
+            items.push(Item {
+                // 3. Name the fields and handle parsing
+                id: values[0].trim().parse().unwrap_or(0),
+                done: values[1].trim().parse().unwrap_or(false),
+                // 4. Convert &str to String
+                todo: values[2].trim().to_string(),
+            });
+        }
+    }
+
+    Ok(items)
+
 }

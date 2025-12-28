@@ -6,15 +6,16 @@ mod utils;
 
 fn main() {
     let args: Vec<String> = env::args().collect(); // we collect the arguments here for our todo_list
-    let mut items = Vec::new();
+    let mut items = load("todo/list.todo".to_string()).expect("Failed to load file");
+
 
     if args.len() < 2 {
         println!("Usage:");
         println!("  add <todo>");
         println!("  mod <id> <todo>");
-        println!("  list");
+        println!("  ls");
         println!("  done <id>");
-        println!("  remove <id>");
+        println!("  rm <id>");
         return;
     }
 
@@ -24,7 +25,7 @@ fn main() {
                add(&mut items, todo);
                println!("ADDED!");
            }
-           "list" => {
+           "ls" => {
                list(&items);
            }
            "mod" => {
@@ -36,7 +37,7 @@ fn main() {
                let id: u64 = args[2].parse().unwrap();
                toggle_done(&mut items, id);
            }
-           "remove" => {
+           "rm" => {
                let id: u64 = args[2].parse().unwrap();
                remove(&mut items, id);
            }
@@ -44,6 +45,8 @@ fn main() {
                println!("Unknown command");
            }
        }
+
+       save(items, "todo/list.todo".to_string()).expect("Failed to save file");
 
 
 }
