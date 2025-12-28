@@ -14,6 +14,13 @@ cargo build
 target/debug/rustodo-cli <command> <OPTIONAL>
 ```
 
+## Remaining Tasks
+
+[ ] Add CLI to the path so that can be accesssed anywhere - **IMPORTANT**
+[ ] Windows and MacOs compatibility
+[ ] Keep a list of `.todo` files for deletion purposes
+[ ] Create a new list with a `<name>`
+
 ## Citations
 
 >
