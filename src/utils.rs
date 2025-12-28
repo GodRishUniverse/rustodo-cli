@@ -11,19 +11,27 @@ pub struct Item {
 }
 
 
-pub fn modify(id: u64) {
-
+pub fn modify(items: &mut Vec<Item>, id: u64, todo: String) {
+    match items.binary_search_by_key(&id, |item| item.id) {
+        Ok(index) => items[index].todo = todo,
+        Err(_) => println!("Not found"),
+    }
 }
 
 pub fn add(items: &mut Vec<Item>, todo: String){
     // add
-    let mut id = 0;
-    if (items.len() as u64 == 0){
-        id =1;
-    } else{
-        id = items[items.len()-1].id+1;
-    }
+    // let mut id = 0;
+    // if (items.len() as u64 == 0){
+    //     id =1;
+    // } else{
+    //     id = items[items.len()-1].id+1;
+    // }
 
+    //Same as above but more rusty
+    let id = match items.last() {
+        Some(item) => item.id + 1,
+        None => 1,
+    };
 
     items.push(Item{id, todo, done: false});
 }
@@ -46,8 +54,8 @@ pub fn toggle_done(items: &mut Vec<Item>, id : u64){
 pub fn remove(items: &mut Vec<Item>, id: u64){
     // remove from our list -> specify id
     match items.binary_search_by_key(&id, |item| item.id) {
-        Ok(index) => items.remove(index),
-        Err(_) => println!("Not found"),
+        Ok(index) => {items.remove(index);},
+        Err(_) =>{ println!("Not found");},
     }
 }
 

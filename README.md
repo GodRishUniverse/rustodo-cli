@@ -4,6 +4,14 @@ This is my first *Rust* project as I learn this language.
 
 I am implementing a basic CLI-app for a simple todo list.
 
+## Build instructions
+
+Make sure you have `rust` installed (`rustc` and `cargo`)
+
+```bash
+cargo build
+target/debug/rustodo-cli <command> <OPTIONAL>
+```
 
 ## Citations
 
