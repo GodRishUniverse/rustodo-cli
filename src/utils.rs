@@ -1,8 +1,6 @@
 use std::fs::*;
-use std::fs;
-
+use std::path::Path;
 use std::io::{BufWriter, Write,BufReader, BufRead,Result};
-
 
 /*
  * We need the #[derive(Debug)] to automatically implements the Debug trait - allows to format a value for debugging purposes using the {:?} or {:#?} format in println
@@ -15,7 +13,6 @@ pub struct Item {
     pub todo: String,
     pub done : bool,
 }
-
 
 pub fn modify(items: &mut Vec<Item>, id: u64, todo: String) {
     match items.binary_search_by_key(&id, |item| item.id) {
@@ -65,14 +62,16 @@ pub fn remove(items: &mut Vec<Item>, id: u64){
     }
 }
 
-pub fn save(items: Vec<Item>, filepath: String) -> std::io::Result<()>{
+pub fn save(items: &Vec<Item>, filepath: String) -> Result<()>{
     // save the todo list that we have in Vector of Items
 
     let file = File::create(&filepath)?;
     let mut writer = BufWriter::new(file);
 
+    let mut c = 1;
     for item in items{
-        writeln!(writer, "{},{},{}", item.id, item.done, item.todo)?;
+        writeln!(writer, "{},{},{}", c, item.done, item.todo)?;
+        c+=1; // so that ID is always sorted
     }
 
     writer.flush()?;
@@ -80,11 +79,10 @@ pub fn save(items: Vec<Item>, filepath: String) -> std::io::Result<()>{
     Ok(())
 }
 
-pub fn load(filepath: String)-> std::io::Result<Vec<Item>> {
+pub fn load(filepath: String)-> Result<Vec<Item>> {
     let file = File::open(filepath)?;
     let reader = BufReader::new(file);
     let mut items = Vec::new();
-
 
     for line in reader.lines() {
         let line = line?; // Handle potential I/O errors for each line
@@ -102,5 +100,20 @@ pub fn load(filepath: String)-> std::io::Result<Vec<Item>> {
     }
 
     Ok(items)
+}
 
+
+pub fn delete(filepath: String) {
+    if Path::new(&filepath).extension().map_or(false, |ext| ext == "todo"){
+        match remove_file(&filepath) {
+            Ok(()) => {
+                println!("File removed successfully");
+            }
+            Err(_) => {
+                eprintln!("Error removing file.");
+            }
+        }
+    } else {
+        println!("Can only delete `.todo` files created by rustodo-cli");
+    }
 }

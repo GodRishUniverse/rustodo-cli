@@ -9,6 +9,7 @@ I am implementing a basic CLI-app for a simple todo list.
 Make sure you have `rust` installed (`rustc` and `cargo`)
 
 ```bash
+cargo clean
 cargo build
 target/debug/rustodo-cli <command> <OPTIONAL>
 ```
