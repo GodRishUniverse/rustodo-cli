@@ -1,17 +1,17 @@
 use std::fs::*;
+use std::io::{BufRead, BufReader, BufWriter, Result, Write};
 use std::path::Path;
-use std::io::{BufWriter, Write,BufReader, BufRead,Result};
 
 /*
  * We need the #[derive(Debug)] to automatically implements the Debug trait - allows to format a value for debugging purposes using the {:?} or {:#?} format in println
  */
 
- // public struct for item in todo list
+// public struct for item in todo list
 #[derive(Debug)]
 pub struct Item {
     pub id: u64,
     pub todo: String,
-    pub done : bool,
+    pub done: bool,
 }
 
 pub fn modify(items: &mut Vec<Item>, id: u64, todo: String) {
@@ -21,7 +21,7 @@ pub fn modify(items: &mut Vec<Item>, id: u64, todo: String) {
     }
 }
 
-pub fn add(items: &mut Vec<Item>, todo: String){
+pub fn add(items: &mut Vec<Item>, todo: String) {
     // add
     // let mut id = 0;
     // if (items.len() as u64 == 0){
@@ -36,7 +36,11 @@ pub fn add(items: &mut Vec<Item>, todo: String){
         None => 1,
     };
 
-    items.push(Item{id, todo, done: false});
+    items.push(Item {
+        id,
+        todo,
+        done: false,
+    });
 }
 
 pub fn list(items: &Vec<Item>) {
@@ -46,7 +50,7 @@ pub fn list(items: &Vec<Item>) {
     }
 }
 
-pub fn toggle_done(items: &mut Vec<Item>, id : u64){
+pub fn toggle_done(items: &mut Vec<Item>, id: u64) {
     // change the toggle -> need to specify id
     match items.binary_search_by_key(&id, |item| item.id) {
         Ok(index) => items[index].done = !items[index].done,
@@ -54,24 +58,28 @@ pub fn toggle_done(items: &mut Vec<Item>, id : u64){
     }
 }
 
-pub fn remove(items: &mut Vec<Item>, id: u64){
+pub fn remove(items: &mut Vec<Item>, id: u64) {
     // remove from our list -> specify id
     match items.binary_search_by_key(&id, |item| item.id) {
-        Ok(index) => {items.remove(index);},
-        Err(_) =>{ println!("Not found");},
+        Ok(index) => {
+            items.remove(index);
+        }
+        Err(_) => {
+            println!("Not found");
+        }
     }
 }
 
-pub fn save(items: &Vec<Item>, filepath: String) -> Result<()>{
+pub fn save(items: &Vec<Item>, filepath: String) -> Result<()> {
     // save the todo list that we have in Vector of Items
 
     let file = File::create(&filepath)?;
     let mut writer = BufWriter::new(file);
 
     let mut c = 1;
-    for item in items{
+    for item in items {
         writeln!(writer, "{},{},{}", c, item.done, item.todo)?;
-        c+=1; // so that ID is always sorted
+        c += 1; // so that ID is always sorted
     }
 
     writer.flush()?;
@@ -79,7 +87,7 @@ pub fn save(items: &Vec<Item>, filepath: String) -> Result<()>{
     Ok(())
 }
 
-pub fn load(filepath: String)-> Result<Vec<Item>> {
+pub fn load(filepath: String) -> Result<Vec<Item>> {
     let file = File::open(filepath)?;
     let reader = BufReader::new(file);
     let mut items = Vec::new();
@@ -102,9 +110,11 @@ pub fn load(filepath: String)-> Result<Vec<Item>> {
     Ok(items)
 }
 
-
 pub fn delete(filepath: String) {
-    if Path::new(&filepath).extension().map_or(false, |ext| ext == "todo"){
+    if Path::new(&filepath)
+        .extension()
+        .map_or(false, |ext| ext == "todo")
+    {
         match remove_file(&filepath) {
             Ok(()) => {
                 println!("File removed successfully");
